@@ -18,7 +18,7 @@ spec:
     spec:
       containers:
       - name: twitter-feed
-        image: $DOCKER_REPO:$WERCKER_GIT_COMMIT
+        image: $DOCKER_REPO:$WERCKER_GIT_BRANCH-$WERCKER_GIT_COMMIT
         imagePullPolicy: Always
         ports:
         - name: twitter-feed
@@ -36,7 +36,7 @@ spec:
               fieldRef:
                 fieldPath: metadata.labels
       imagePullSecrets:
-        - name: ocirsecretstm
+        - name: $OKE_IMAGESECRET
 ---
 apiVersion: v1
 kind: Service
