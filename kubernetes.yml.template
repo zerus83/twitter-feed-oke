@@ -36,7 +36,7 @@ spec:
               fieldRef:
                 fieldPath: metadata.labels
       imagePullSecrets:
-        - name: ${OKE_IMAGESECRET}
+        - name: ocirsecretstm
 ---
 apiVersion: v1
 kind: Service
