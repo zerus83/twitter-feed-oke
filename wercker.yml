@@ -49,7 +49,6 @@ deploy-to-cluster:
     - kubectl:
         name: deploy to kubernetes
         server: $KUBERNETES_MASTER
-        #username: $KUBERNETES_USERNAME
         token: $KUBERNETES_TOKEN
         insecure-skip-tls-verify: true
-        command: apply -f kubernetes.yml --namespace=$NS
+        command: apply -f ./kubernetes.yml --namespace=$NS
