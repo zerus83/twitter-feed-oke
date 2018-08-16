@@ -51,13 +51,13 @@ deploy-to-cluster:
         server: $KUBERNETES_MASTER
         token: $KUBERNETES_TOKEN
         insecure-skip-tls-verify: true
-        command: delete secret $OKE_IMAGESECRET --namespace='tryme' --ignore-not-found=true
+        command: delete secret secretname --namespace='tryme' --ignore-not-found=true
      -kubectl:
         name: create OCR secret
         server: $KUBERNETES_MASTER
         token: $KUBERNETES_TOKEN
         insecure-skip-tls-verify: true
-        command: create secret docker-registry wrelease --docker-server=docker.io --docker-username=$DOCKER_USER --docker-password=$DOCKER_PASSWORD --docker-email=${WERCKER_APPLICATION_OWNER_NAME}@mail.com --namespace=$NS
+        command: create secret docker-registry secretname --docker-server=docker.io --docker-username=$DOCKER_USER --docker-password=$DOCKER_PASSWORD --docker-email=${WERCKER_APPLICATION_OWNER_NAME}@mail.com --namespace=$NS
      - kubectl:
         name: deploy to kubernetes
         server: $KUBERNETES_MASTER
