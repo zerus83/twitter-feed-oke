@@ -1,7 +1,7 @@
 apiVersion: extensions/v1beta1
 kind: Deployment
 metadata:
-  name: twitter-feed-v2
+  name: twitter-feed-v1
   labels:
     commit: ${WERCKER_GIT_COMMIT}
 spec:
@@ -14,11 +14,11 @@ spec:
       labels:
         app: twitter-feed
         commit: ${WERCKER_GIT_COMMIT}
-        color: green
+        color: blue
     spec:
       containers:
       - name: twitter-feed
-        image: ${DOCKER_REPO}:${WERCKER_GIT_BRANCH}-${WERCKER_GIT_COMMIT}
+        image: $DOCKER_REPO:$WERCKER_GIT_COMMIT
         imagePullPolicy: Always
         ports:
         - name: twitter-feed
@@ -36,7 +36,7 @@ spec:
               fieldRef:
                 fieldPath: metadata.labels
       imagePullSecrets:
-        - name: wercker
+        - name: $OKE_IMAGESECRET
 ---
 apiVersion: v1
 kind: Service
@@ -51,6 +51,6 @@ spec:
     targetPort: 8080
   selector:
     app: twitter-feed
-    color: green
+    color: blue
   type: ClusterIP
 ---
