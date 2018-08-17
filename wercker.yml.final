@@ -2,7 +2,7 @@
 box:
   id: openjdk
   ports:
-    - 8080
+    - $PORT
 
 #Build our application using Maven, just as we always have
 build:
@@ -21,10 +21,11 @@ push-release:
         password: $DOCKER_PASSWORD
         repository: $DOCKER_REPO
         registry: $DOCKER_REGISTRY
-        tag: $WERCKER_GIT_BRANCH-$WERCKER_GIT_COMMIT
+        tag: $WERCKER_GIT_COMMIT
         working-dir: /pipeline/source
         ports: $PORT
         cmd: sh target/bin/start
+
 
 #Deploy our container from the Oracle Container Registry to the Oracle Container Engine (Kubernetes)
 deploy-to-cluster:
@@ -40,9 +41,26 @@ deploy-to-cluster:
         code: cat kubernetes.yml
 
     - kubectl:
-        name: deploy to kubernetes
+        name: apply namespace    
         server: $KUBERNETES_MASTER
-        #username: $KUBERNETES_USERNAME
         token: $KUBERNETES_TOKEN
         insecure-skip-tls-verify: true
-        command: apply -f kubernetes.yml
+        command: apply -f ./ns.yml
+    - kubectl:
+        name: delete OCR secret
+        server: $KUBERNETES_MASTER
+        token: $KUBERNETES_TOKEN
+        insecure-skip-tls-verify: true
+        command: delete secret okeworkshop --namespace=$NS --ignore-not-found=true
+    - kubectl:
+        name: create OCR secret
+        server: $KUBERNETES_SERVER
+        token: $KUBERNETES_TOKEN
+        insecure-skip-tls-verify: true
+        command: create secret docker-registry okeworkshop --docker-server=iad.ocir.io --docker-username=$DOCKER_USERNAME --docker-password="$DOCKER_PASSWORD" --docker-email=${WERCKER_APPLICATION+OWNER_NAME}@mail.com --namespace="$NS"
+    - kubectl:
+        name: deploy to kubernetes
+        server: $KUBERNETES_MASTER
+        token: $KUBERNETES_TOKEN
+        insecure-skip-tls-verify: true
+        command: apply -f ./kubernetes.yml --namespace=$NS
